@@ -162,7 +162,6 @@ def opt1(mybar,percent_complete,dfglob):
 
     #Moyenne des sommes dépensées par jours
     st.header('Moyenne des sommes dépensées par jours')
-    st.write(date(dfglob).head())
     st.line_chart(date(dfglob))
 
     #Mise à jour de la barre de chargement
