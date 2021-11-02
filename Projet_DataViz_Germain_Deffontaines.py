@@ -3,9 +3,37 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from PIL import Image
+from functools import wraps
+import logging
+import time
+import datetime
+
+logger = logging.getLogger(__name__)
+
+logger.setLevel("INFO")
+handler = logging.FileHandler(filename="log.txt", mode="a")
+log_format = "%(asctime)s %(levelname)s -- %(message)s"
+formatter = logging.Formatter(log_format)
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
+logging.info('\nNew Execution at :', time.time(), "\n")
+
+def timed(func):
+    """This decorator prints the execution time for the decorated function."""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        end = time.time()
+        logger.info("{} ran in {}s".format(func.__name__, round(end - start, 2)))
+        return result
+
+    return wrapper
 
 
-st.title('Project Dashboard Germain Deffontaines Valeurs Foncières')
+
 
 #Fonctions :
 
@@ -50,26 +78,10 @@ def date(dfglob):
     dfDate = dfDate.groupby(pd.Grouper(key='date_mutation',freq = 'D')).mean()
     return dfDate
 
-df17 = loadDF2017()
-df18 = loadDF2018()
-df19 = loadDF2019()
-df20 = loadDF2020()
-dfglob = loadDFglob(df17,df18,df19,df20)
-
-#Side bar :
-
-option1 = st.sidebar.selectbox(' Quelle année voulez vous afficher ?', ('Global','Année 2020', 'Année 2019', 'Année 2018', 'Année 2017' ))
-
-st.sidebar.write('Chargement :')
-mybar = st.sidebar.progress(0)
-percent_complete = 0
-
-st.sidebar.video('https://www.youtube.com/watch?v=AVhaRg4xG4Q')
-st.sidebar.video('https://www.youtube.com/watch?v=pVQUmGDesqc')
-st.sidebar.video('https://www.youtube.com/watch?v=yauu_vYDzCw')
-
 #Première option: Données globales (2017 + 2018 + 2019 + 2020)
-if option1 == 'Global':
+@timed
+def opt1(mybar,percent_complete,dfglob):
+
     
     #Camembert de la nature des mutations:
     st.header('Nature des mutations:')
@@ -139,8 +151,9 @@ if option1 == 'Global':
     mybar.progress(percent_complete)
 
     #TOP 5 des communes les plus représentées
-    st.header('TOP 5 des communes les plus représentées')
-    values = dfglob['nom_commune'].value_counts().head()
+    n = st.slider('Nombre de communes :', 1, 30,5)
+    st.header('TOP '+str(n)+ ' des communes les plus représentées')
+    values = dfglob['nom_commune'].value_counts().head(n)
     st.bar_chart(values)
 
     #Mise à jour de la barre de chargement
@@ -149,14 +162,16 @@ if option1 == 'Global':
 
     #Moyenne des sommes dépensées par jours
     st.header('Moyenne des sommes dépensées par jours')
-    st.area_chart(date(dfglob))
+    st.write(date(dfglob).head())
+    st.line_chart(date(dfglob))
 
     #Mise à jour de la barre de chargement
     percent_complete += 20
     mybar.progress(percent_complete)
 
 #Deuxième option: Données de l'année 2020
-if option1 == 'Année 2020':
+@timed
+def opt2(mybar,percent_complete,df20):
 
     #Camembert de la nature des mutations:
     st.header('Nature des mutations:')
@@ -226,7 +241,8 @@ if option1 == 'Année 2020':
     mybar.progress(percent_complete)
 
     #TOP 5 des communes les plus représentées
-    st.header('TOP 5 des communes les plus représentées')
+    n = st.slider('Nombre de communes :', 1, 30,5)
+    st.header('TOP '+str(n)+ ' des communes les plus représentées')
     values = df20['nom_commune'].value_counts().head()
     st.bar_chart(values)
 
@@ -243,9 +259,10 @@ if option1 == 'Année 2020':
     mybar.progress(percent_complete)
 
 #Troisème option: Données de l'année 2019
-if option1 == 'Année 2019':
+@timed
+def opt3(mybar,percent_complete,df19):
 
-   #Camembert de la nature des mutations:
+    #Camembert de la nature des mutations:
     st.header('Nature des mutations:')
     labels=['Vente',"Vente en l'état futur d'achèvement","Echange","Vente terrain à bâtir","Adjudication","Expropriation"]
     values = df19['nature_mutation'].value_counts()
@@ -313,7 +330,8 @@ if option1 == 'Année 2019':
     mybar.progress(percent_complete)
 
     #TOP 5 des communes les plus représentées
-    st.header('TOP 5 des communes les plus représentées')
+    n = st.slider('Nombre de communes :', 1, 30,5)
+    st.header('TOP '+str(n)+ ' des communes les plus représentées')
     values = df19['nom_commune'].value_counts().head()
     st.bar_chart(values)
 
@@ -330,7 +348,8 @@ if option1 == 'Année 2019':
     mybar.progress(percent_complete)
 
 #Quatrième option: Données de l'année 2018
-if option1 == 'Année 2018':
+@timed
+def opt4(mybar,percent_complete,df18):
 
     #Camembert de la nature des mutations:
     st.header('Nature des mutations:')
@@ -400,7 +419,8 @@ if option1 == 'Année 2018':
     mybar.progress(percent_complete)
 
     #TOP 5 des communes les plus représentées
-    st.header('TOP 5 des communes les plus représentées')
+    n = st.slider('Nombre de communes :', 1, 30,5)
+    st.header('TOP '+str(n)+ ' des communes les plus représentées')
     values = df18['nom_commune'].value_counts().head()
     st.bar_chart(values)
 
@@ -417,7 +437,8 @@ if option1 == 'Année 2018':
     mybar.progress(percent_complete)
 
 #Cinquième option: Données de l'année 2017
-if option1 == 'Année 2017':
+@timed
+def opt5(mybar,percent_complete,df17):
 
     #Camembert de la nature des mutations:
     st.header('Nature des mutations:')
@@ -487,7 +508,8 @@ if option1 == 'Année 2017':
     mybar.progress(percent_complete)
 
     #TOP 5 des communes les plus représentées
-    st.header('TOP 5 des communes les plus représentées')
+    n = st.slider('Nombre de communes :', 1, 30,5)
+    st.header('TOP '+str(n)+ ' des communes les plus représentées')
     values = df17['nom_commune'].value_counts().head()
     st.bar_chart(values)
 
@@ -503,5 +525,54 @@ if option1 == 'Année 2017':
     percent_complete += 20
     mybar.progress(percent_complete)
 
+def sel(op,df):
+    st.write(df[op].head())
 
+def check(dfglob):
+    agree = st.checkbox('Voir une partie du Dataset')
+    if agree:
+        st.write(dfglob.head())
+        agree2 = st.checkbox("Ne voir qu'une colonne")
+        if agree2:
+            op = st.selectbox('Choix de la colonne',('id_mutation','date_mutation','nature_mutation','valeur_fonciere','adresse_nom_voie','code_postal','code_commune','nom_commune','id_parcelle','longitude','latitude'))
+            sel(op,dfglob)
 
+def main():
+    df17 = loadDF2017()
+    df18 = loadDF2018()
+    df19 = loadDF2019()
+    df20 = loadDF2020()
+    dfglob = loadDFglob(df17,df18,df19,df20)
+
+    st.title('Project Dashboard Germain Deffontaines Valeurs Foncières')
+
+    #Side bar :
+
+    option1 = st.sidebar.selectbox(' Quelle année voulez vous afficher ?', ('Global','Année 2020', 'Année 2019', 'Année 2018', 'Année 2017' ))
+
+    st.sidebar.write('Chargement :')
+    mybar = st.sidebar.progress(0)
+    percent_complete = 0
+
+    st.sidebar.video('https://www.youtube.com/watch?v=AVhaRg4xG4Q')
+    st.sidebar.video('https://www.youtube.com/watch?v=pVQUmGDesqc')
+    st.sidebar.video('https://www.youtube.com/watch?v=yauu_vYDzCw')
+
+    if option1 == 'Global':
+        opt1(mybar,percent_complete,dfglob)
+        check(dfglob)
+    if option1 == 'Année 2020':
+        opt2(mybar,percent_complete,df20)
+        check(df20)
+    if option1 == 'Année 2019':
+        opt3(mybar,percent_complete,df19)
+        check(df19)
+    if option1 == 'Année 2018':
+        opt4(mybar,percent_complete,df18)
+        check(df18)
+    if option1 == 'Année 2017':
+        opt5(mybar,percent_complete,df17)
+        check(df17)
+
+if __name__ == "__main__":
+    main()
