@@ -242,7 +242,7 @@ def opt2(mybar,percent_complete,df20):
     #TOP 5 des communes les plus représentées
     n = st.slider('Nombre de communes :', 1, 30,5)
     st.header('TOP '+str(n)+ ' des communes les plus représentées')
-    values = df20['nom_commune'].value_counts().head()
+    values = df20['nom_commune'].value_counts().head(n)
     st.bar_chart(values)
 
     #Mise à jour de la barre de chargement
@@ -331,7 +331,7 @@ def opt3(mybar,percent_complete,df19):
     #TOP 5 des communes les plus représentées
     n = st.slider('Nombre de communes :', 1, 30,5)
     st.header('TOP '+str(n)+ ' des communes les plus représentées')
-    values = df19['nom_commune'].value_counts().head()
+    values = df19['nom_commune'].value_counts().head(n)
     st.bar_chart(values)
 
     #Mise à jour de la barre de chargement
@@ -420,7 +420,7 @@ def opt4(mybar,percent_complete,df18):
     #TOP 5 des communes les plus représentées
     n = st.slider('Nombre de communes :', 1, 30,5)
     st.header('TOP '+str(n)+ ' des communes les plus représentées')
-    values = df18['nom_commune'].value_counts().head()
+    values = df18['nom_commune'].value_counts().head(n)
     st.bar_chart(values)
 
     #Mise à jour de la barre de chargement
@@ -509,7 +509,7 @@ def opt5(mybar,percent_complete,df17):
     #TOP 5 des communes les plus représentées
     n = st.slider('Nombre de communes :', 1, 30,5)
     st.header('TOP '+str(n)+ ' des communes les plus représentées')
-    values = df17['nom_commune'].value_counts().head()
+    values = df17['nom_commune'].value_counts().head(n)
     st.bar_chart(values)
 
     #Mise à jour de la barre de chargement
