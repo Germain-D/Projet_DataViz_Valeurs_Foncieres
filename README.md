@@ -1,7 +1,7 @@
 # Projet de Data Visualisation
 ## _Germain Deffontaines M1APP-BDIA_
 
-[![N|Solid]dashboard.png)]
+![](/dashboard.png "Apperçu du Dasboard").
 
 
 
