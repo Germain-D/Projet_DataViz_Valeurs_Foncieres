@@ -1,6 +1,10 @@
 # Projet de Data Visualisation
 ## _Germain Deffontaines M1APP-BDIA_
 
+[![N|Solid]dashboard.png)]
+
+
+
 Lien vers les différents Dataset utilisés :
 [![N|Solid](https://upload.wikimedia.org/wikipedia/fr/thumb/8/84/Data_gouv_fr_logo.svg/2560px-Data_gouv_fr_logo.svg.png)](https://www.data.gouv.fr/en/datasets/demandes-de-valeurs-foncieres/)
 
